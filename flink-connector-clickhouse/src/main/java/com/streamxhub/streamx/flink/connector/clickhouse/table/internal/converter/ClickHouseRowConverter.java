@@ -22,6 +22,7 @@ package com.streamxhub.streamx.flink.connector.clickhouse.table.internal.convert
 
 import org.apache.flink.table.data.*;
 import org.apache.flink.table.data.binary.BinaryArrayData;
+import org.apache.flink.table.data.binary.BinaryMapData;
 import org.apache.flink.table.types.logical.*;
 import org.apache.flink.table.types.logical.utils.LogicalTypeUtils;
 import org.apache.flink.util.Preconditions;
@@ -34,6 +35,8 @@ import java.math.BigInteger;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author benjobs
@@ -77,64 +80,86 @@ public class ClickHouseRowConverter implements Serializable {
     private SerializationConverter createToClickHouseConverter(LogicalType type) {
         return (rowData, pos, statement) -> {
             int index = pos + 1;
-            if (type.getTypeRoot().equals(LogicalTypeRoot.ARRAY)) {
-                ArrayData arrayData = rowData.getArray(pos);
-                ClickHouseArray array = toClickHouseArray(arrayData, type);
-                statement.setArray(index, array);
+            if (rowData == null || rowData.isNullAt(pos) || LogicalTypeRoot.NULL.equals(type.getTypeRoot())) {
+                statement.setObject(index, null);
             } else {
-                if (rowData == null || rowData.isNullAt(pos) || LogicalTypeRoot.NULL.equals(type.getTypeRoot())) {
-                    statement.setObject(index, null);
-                } else {
-                    switch (type.getTypeRoot()) {
-                        case BOOLEAN:
-                            statement.setBoolean(index, rowData.getBoolean(pos));
-                            break;
-                        case TINYINT:
-                            statement.setByte(index, rowData.getByte(pos));
-                            break;
-                        case SMALLINT:
-                            statement.setShort(index, rowData.getShort(pos));
-                            break;
-                        case INTERVAL_YEAR_MONTH:
-                        case INTEGER:
-                            statement.setInt(index, rowData.getInt(pos));
-                            break;
-                        case INTERVAL_DAY_TIME:
-                        case BIGINT:
-                            statement.setLong(index, rowData.getLong(pos));
-                            break;
-                        case FLOAT:
-                            statement.setFloat(index, rowData.getFloat(pos));
-                            break;
-                        case CHAR:
-                        case VARCHAR:
-                            statement.setString(index, rowData.getString(pos).toString());
-                            break;
-                        case VARBINARY:
-                            statement.setBytes(index, rowData.getBinary(pos));
-                            break;
-                        case DATE:
-                            statement.setDate(index, Date.valueOf(LocalDate.ofEpochDay(rowData.getInt(pos))));
-                            break;
-                        case TIME_WITHOUT_TIME_ZONE:
-                            statement.setTime(index, Time.valueOf(LocalTime.ofNanoOfDay(rowData.getInt(pos) * 1000000L)));
-                            break;
-                        case TIMESTAMP_WITH_TIME_ZONE:
-                        case TIMESTAMP_WITHOUT_TIME_ZONE:
-                            int timestampPrecision = ((TimestampType) type).getPrecision();
-                            statement.setTimestamp(index, rowData.getTimestamp(pos, timestampPrecision).toTimestamp());
-                            break;
-                        case DECIMAL:
-                            int decimalPrecision = ((DecimalType) type).getPrecision();
-                            int decimalScale = ((DecimalType) type).getScale();
-                            statement.setBigDecimal(
-                                    index,
-                                    rowData.getDecimal(pos, decimalPrecision, decimalScale).toBigDecimal()
-                            );
-                            break;
-                        default:
-                            throw new UnsupportedOperationException("Unsupported type:" + type);
-                    }
+                switch (type.getTypeRoot()) {
+                    case BOOLEAN:
+                        statement.setBoolean(index, rowData.getBoolean(pos));
+                        break;
+                    case TINYINT:
+                        statement.setByte(index, rowData.getByte(pos));
+                        break;
+                    case SMALLINT:
+                        statement.setShort(index, rowData.getShort(pos));
+                        break;
+                    case INTERVAL_YEAR_MONTH:
+                    case INTEGER:
+                        statement.setInt(index, rowData.getInt(pos));
+                        break;
+                    case INTERVAL_DAY_TIME:
+                    case BIGINT:
+                        statement.setLong(index, rowData.getLong(pos));
+                        break;
+                    case FLOAT:
+                        statement.setFloat(index, rowData.getFloat(pos));
+                        break;
+                    case CHAR:
+                    case VARCHAR:
+                        statement.setString(index, rowData.getString(pos).toString());
+                        break;
+                    case VARBINARY:
+                        statement.setBytes(index, rowData.getBinary(pos));
+                        break;
+                    case DATE:
+                        statement.setDate(index, Date.valueOf(LocalDate.ofEpochDay(rowData.getInt(pos))));
+                        break;
+                    case TIME_WITHOUT_TIME_ZONE:
+                        statement.setTime(index, Time.valueOf(LocalTime.ofNanoOfDay(rowData.getInt(pos) * 1000000L)));
+                        break;
+                    case TIMESTAMP_WITH_TIME_ZONE:
+                    case TIMESTAMP_WITHOUT_TIME_ZONE:
+                        int timestampPrecision = ((TimestampType) type).getPrecision();
+                        statement.setTimestamp(index, rowData.getTimestamp(pos, timestampPrecision).toTimestamp());
+                        break;
+                    case DECIMAL:
+                        int decimalPrecision = ((DecimalType) type).getPrecision();
+                        int decimalScale = ((DecimalType) type).getScale();
+                        statement.setBigDecimal(
+                                index,
+                                rowData.getDecimal(pos, decimalPrecision, decimalScale).toBigDecimal()
+                        );
+                        break;
+                    case ARRAY:
+                        ArrayData arrayData = rowData.getArray(pos);
+                        ClickHouseArray array = toClickHouseArray(arrayData, type);
+                        statement.setArray(index, array);
+                        break;
+                    case MAP:
+                        MapData mapData = rowData.getMap(pos);
+                        if (mapData != null && mapData.size() > 0) {
+                            MapType mapType = (MapType) type;
+                            LogicalType keyType = mapType.getKeyType();
+                            LogicalType valueType = mapType.getValueType();
+                            if (mapData instanceof BinaryMapData) {
+                                BinaryMapData binaryMapData = (BinaryMapData) mapData;
+                                BinaryArrayData keys = binaryMapData.keyArray();
+                                BinaryArrayData values = binaryMapData.valueArray();
+                                Object[] keyArray = keys.toObjectArray(keyType);
+                                Object[] valueArray = values.toObjectArray(valueType);
+                                Map<String, String> map = new HashMap<>();
+                                for (int i = 0; i < keyArray.length; i++) {
+                                    Object value = valueArray[i];
+                                    map.put(keyArray[i].toString(), value.toString());
+                                }
+                                statement.setObject(index, map);
+                            }
+                        } else {
+                            statement.setObject(index, null);
+                        }
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported type:" + type);
                 }
             }
         };
@@ -232,9 +257,15 @@ public class ClickHouseRowConverter implements Serializable {
                 return val -> (byte[]) val;
             case ARRAY:
                 return val -> toFlinkArray((ClickHouseArray) val, type);
+            case MAP:
+                return val -> val;
             default:
                 throw new UnsupportedOperationException("Unsupported type:" + type);
         }
+    }
+
+    private Object toFlinkMap(Object val, LogicalType type) {
+        return null;
     }
 
     @FunctionalInterface

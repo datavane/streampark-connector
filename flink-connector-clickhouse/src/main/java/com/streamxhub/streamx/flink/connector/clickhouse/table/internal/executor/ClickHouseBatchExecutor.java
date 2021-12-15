@@ -155,8 +155,12 @@ public class ClickHouseBatchExecutor implements ClickHouseExecutor {
                     ClickHouseBatchExecutor.this.wait(ClickHouseBatchExecutor.this.flushInterval.toMillis());
                     if (!ClickHouseBatchExecutor.this.batch.isEmpty()) {
                         for (RowData rowData : ClickHouseBatchExecutor.this.batch) {
-                            ClickHouseBatchExecutor.this.converter.toClickHouse(rowData, ClickHouseBatchExecutor.this.stmt);
-                            ClickHouseBatchExecutor.this.stmt.addBatch();
+                            try{
+                                ClickHouseBatchExecutor.this.converter.toClickHouse(rowData, ClickHouseBatchExecutor.this.stmt);
+                                ClickHouseBatchExecutor.this.stmt.addBatch();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                         attemptExecuteBatch();
                     }
