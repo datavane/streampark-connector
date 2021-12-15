@@ -147,12 +147,15 @@ public class ClickHouseRowConverter implements Serializable {
                                 BinaryArrayData values = binaryMapData.valueArray();
                                 Object[] keyArray = keys.toObjectArray(keyType);
                                 Object[] valueArray = values.toObjectArray(valueType);
-                                Map<String, String> map = new HashMap<>();
+                                Map<String, Object> map = new HashMap<>();
                                 for (int i = 0; i < keyArray.length; i++) {
                                     Object value = valueArray[i];
+                                    //TODO: value可能是一个复杂类型的对象,需要处理...
                                     map.put(keyArray[i].toString(), value.toString());
                                 }
                                 statement.setObject(index, map);
+                            } else {
+                                statement.setObject(index, null);
                             }
                         } else {
                             statement.setObject(index, null);
