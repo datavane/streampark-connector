@@ -14,7 +14,8 @@ mvn clean install -DskipTests -Dflink.version=$version
 * 支持写入集群表和本地表
 * 支持三种写入策略(hash | shuffle | balanced)
 * 支持Clickhouse Array类型写入
-
+* 支持Clickhouse Map类型写入
+* 
 ## 👻 使用
 
 ```sql
@@ -28,7 +29,8 @@ create TABLE log_detail_source(
     processingTimeMs INT,
     errCode VARCHAR,
     userIp VARCHAR,
-    accountIdList ARRAY<VARCHAR>
+    accountIdList ARRAY<VARCHAR>,
+    properties MAP<STRING,STRING>
 ) WITH (
     'connector.type' = 'kafka',
     'connector.version' = 'universal',
@@ -49,7 +51,8 @@ create TABLE log_detail_sink(
     processingTimeMs INT,
     errCode VARCHAR,
     userIp VARCHAR,
-    accountIdList ARRAY<VARCHAR>
+    accountIdList ARRAY<VARCHAR>,
+    properties MAP<STRING,STRING>
 ) WITH (      
     'connector' = 'clickhouse',
     'url' = 'clickhouse://10.10.10.1:8123',
