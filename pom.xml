@@ -14,6 +14,7 @@
     <modules>
         <module>flink-connector-clickhouse</module>
         <module>flink-connector-native-clickhouse</module>
+        <module>flink-connector-pulsar</module>
     </modules>
 
 </project>
