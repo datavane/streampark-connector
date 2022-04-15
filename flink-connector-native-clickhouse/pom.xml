@@ -11,14 +11,6 @@
     <artifactId>flink-connector-native-clickhouse</artifactId>
     <name>flink-connector-native-clickhouse</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <flink.version>1.12.0</flink.version>
-        <guava.version>29.0-jre</guava.version>
-        <scala.binary.version>2.11</scala.binary.version>
-    </properties>
 
     <packaging>jar</packaging>
 
@@ -27,7 +19,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-json</artifactId>
-            <version>1.12.0</version>
+            <version>${flink.version}</version>
         </dependency>
 
         <dependency>
@@ -74,7 +66,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-csv</artifactId>
-            <version>1.12.0</version>
+            <version>${flink.version}</version>
         </dependency>
 
         <!-- Table ecosystem -->
@@ -118,19 +110,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- A planner dependency won't be necessary once FLIP-32 has been completed. -->
-        <!--    <dependency>
-              <groupId>org.apache.flink</groupId>
-              <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
-              <version>${flink.version}</version>
-            </dependency>-->
-
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -147,9 +126,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>

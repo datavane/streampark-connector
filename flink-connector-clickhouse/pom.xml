@@ -11,15 +11,6 @@
     <artifactId>flink-connector-clickhouse</artifactId>
     <name>flink-connector-clickhouse</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <flink.version>1.14.0</flink.version>
-        <guava.version>29.0-jre</guava.version>
-        <scala.binary.version>2.11</scala.binary.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -141,9 +132,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
