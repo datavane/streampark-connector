@@ -15,8 +15,9 @@
         <module>flink-connector-clickhouse</module>
         <module>flink-connector-native-clickhouse</module>
         <module>flink-connector-pulsar</module>
+        <module>flink-connector-http</module>
+        <module>flink-connector-shims</module>
     </modules>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
