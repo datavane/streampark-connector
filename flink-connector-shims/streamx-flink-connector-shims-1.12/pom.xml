@@ -9,13 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <flink.version>1.12.7</flink.version>
-    </properties>
+    <artifactId>streamx-flink-connector-shims-1.12</artifactId>
 
-    <artifactId>streamx-flink-connecotr-shims-1.12</artifactId>
     <dependencies>
-
+        <!-- Blink planner dependency won't be necessary once flink 1.14 (FLIP-32) has been completed. -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
+            <version>${shim12.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.streamxhub.streamx</groupId>
@@ -26,8 +29,8 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-json</artifactId>
-            <version>${flink.version}</version>
+            <version>${shim12.version}</version>
         </dependency>
-
     </dependencies>
+
 </project>

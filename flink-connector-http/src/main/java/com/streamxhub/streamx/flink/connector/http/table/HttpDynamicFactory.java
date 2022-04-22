@@ -12,7 +12,9 @@ import org.apache.flink.table.factories.DynamicTableSourceFactory;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.table.utils.TableSchemaUtils;
 
+import java.time.Duration;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.apache.flink.table.factories.FactoryUtil.createTableFactoryHelper;
@@ -80,9 +82,11 @@ public class HttpDynamicFactory implements DynamicTableSourceFactory, DynamicTab
 
         ReadableConfig options = helper.getOptions();
         TableSchema schema = TableSchemaUtils.getPhysicalSchema(context.getCatalogTable().getSchema());
+        Optional<Duration> temp = context.getConfiguration().getOptional(ExecutionCheckpointingOptions.CHECKPOINTING_INTERVAL);
+        Long sec = !temp.isPresent() ? 60:temp.get().getSeconds();
         return new HttpDynamicTableLookupSource(options,
                 schema,
-                context.getConfiguration().getOptional(ExecutionCheckpointingOptions.CHECKPOINTING_INTERVAL).get().getSeconds());
+                sec);
     }
 
     @Override

@@ -20,19 +20,37 @@
  */
 package com.streamxhub.streamx.flink.connector.clickhouse.table.internal.converter;
 
-import org.apache.flink.table.data.*;
+import com.streamxhub.streamx.flink.connector.shims.sql.clickhouse.ClickhouseArrayImp;
+import org.apache.flink.table.data.ArrayData;
+import org.apache.flink.table.data.DecimalData;
+import org.apache.flink.table.data.GenericArrayData;
+import org.apache.flink.table.data.GenericRowData;
+import org.apache.flink.table.data.MapData;
+import org.apache.flink.table.data.RowData;
+import org.apache.flink.table.data.StringData;
+import org.apache.flink.table.data.TimestampData;
 import org.apache.flink.table.data.binary.BinaryArrayData;
 import org.apache.flink.table.data.binary.BinaryMapData;
-import org.apache.flink.table.types.logical.*;
+import org.apache.flink.table.types.logical.ArrayType;
+import org.apache.flink.table.types.logical.DecimalType;
+import org.apache.flink.table.types.logical.LogicalType;
+import org.apache.flink.table.types.logical.LogicalTypeRoot;
+import org.apache.flink.table.types.logical.MapType;
+import org.apache.flink.table.types.logical.RowType;
+import org.apache.flink.table.types.logical.TimestampType;
 import org.apache.flink.table.types.logical.utils.LogicalTypeUtils;
 import org.apache.flink.util.Preconditions;
 import ru.yandex.clickhouse.ClickHouseArray;
-import ru.yandex.clickhouse.domain.ClickHouseDataType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -169,45 +187,7 @@ public class ClickHouseRowConverter implements Serializable {
     }
 
     private ClickHouseArray toClickHouseArray(ArrayData arrayData, LogicalType type) {
-        ArrayType arrayType = (ArrayType) type;
-        final Class<?> elementClass = LogicalTypeUtils.toInternalConversionClass(arrayType.getElementType());
-        if (arrayData == null) {
-            final Object[] array = (Object[]) java.lang.reflect.Array.newInstance(elementClass, 0);
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        }
-        if (arrayData instanceof GenericArrayData) {
-            GenericArrayData genericArrayData = (GenericArrayData) arrayData;
-            Object[] elements = genericArrayData.toObjectArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, elements);
-        } else if (arrayData instanceof BinaryArrayData) {
-            BinaryArrayData binaryArrayData = (BinaryArrayData) arrayData;
-            Object[] elements = binaryArrayData.toObjectArray(arrayType.getElementType());
-            return new ClickHouseArray(ClickHouseDataType.Array, elements);
-        }
-        ColumnarArrayData columnarArrayData = (ColumnarArrayData) arrayData;
-        if (int[].class.equals(elementClass)) {
-            int[] array = columnarArrayData.toIntArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (long[].class.equals(elementClass)) {
-            long[] array = columnarArrayData.toLongArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (float[].class.equals(elementClass)) {
-            float[] array = columnarArrayData.toFloatArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (double[].class.equals(elementClass)) {
-            double[] array = columnarArrayData.toDoubleArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (short[].class.equals(elementClass)) {
-            short[] array = columnarArrayData.toShortArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (byte[].class.equals(elementClass)) {
-            byte[] array = columnarArrayData.toByteArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        } else if (boolean[].class.equals(elementClass)) {
-            boolean[] array = columnarArrayData.toBooleanArray();
-            return new ClickHouseArray(ClickHouseDataType.Array, array);
-        }
-        throw new RuntimeException("Unsupported primitive array: ");
+        return new ClickhouseArrayImp().toClickHouseArray(arrayData, type);
     }
 
     private ArrayData toFlinkArray(ClickHouseArray chArray, LogicalType type) throws SQLException {
@@ -257,7 +237,7 @@ public class ClickHouseRowConverter implements Serializable {
                 return val -> StringData.fromString((String) val);
             case BINARY:
             case VARBINARY:
-                return val -> (byte[]) val;
+                return val -> val;
             case ARRAY:
                 return val -> toFlinkArray((ClickHouseArray) val, type);
             case MAP:

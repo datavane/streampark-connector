@@ -6,7 +6,9 @@
 ```shell
 git clone https://github.com/streamxhub/streamx-connector.git
 cd streamx-connector/flink-connector-clickhouse
-mvn clean install -DskipTests -Dflink.version=$version
+# 假如 flink 版本低于 1.14 请把 streamx-connector 父级 pom 添加 blink 依赖(取消注释) 
+# $version_withouttail ： 1.14 1.13 1.12 ; 通过 shim 屏蔽 flink 版本差异
+mvn clean install -DskipTests -Dflink.version=1.13.2 -Dshim.version=1.13 -Dshim13.version=1.13.2
 ```
 
 ## 🎉 Features
