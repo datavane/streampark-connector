@@ -1,12 +1,12 @@
 package com.streamxhub.streamx.flink.connector.shims.sql;
 
-import com.streamxhub.streamx.flink.connector.shims.sql.RowJsonTranslate;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.formats.common.TimestampFormat;
 import org.apache.flink.formats.json.JsonFormatOptions;
 import org.apache.flink.formats.json.JsonRowDataDeserializationSchema;
 import org.apache.flink.formats.json.JsonRowDataSerializationSchema;
 import org.apache.flink.table.data.RowData;
+import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
+import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.RowType;
 
 import java.io.Serializable;
@@ -19,13 +19,12 @@ public class RowJsonTranslateImp implements RowJsonTranslate, Serializable {
     private JsonRowDataDeserializationSchema deserializationSchema;
     private JsonRowDataSerializationSchema serializationSchema;
 
-    public void iniDeser(RowType rowType, TypeInformation<RowData> resultTypeInfo) {
+
+    public void iniDeser(RowType rowType, LogicalType logicalType) {
+
         this.deserializationSchema =
-                new JsonRowDataDeserializationSchema(rowType, resultTypeInfo, false, true, TimestampFormat.ISO_8601);
-
+                new JsonRowDataDeserializationSchema(rowType, InternalTypeInfo.of((RowType) logicalType), false, true, TimestampFormat.ISO_8601);
     }
-
-
 
     public void iniSeri(RowType rowType) {
         this.serializationSchema =

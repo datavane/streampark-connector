@@ -2,6 +2,7 @@ package com.streamxhub.streamx.flink.connector.shims.sql;
 
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.table.data.RowData;
+import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.RowType;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.io.IOException;
  */
 public interface RowJsonTranslate {
 
-    void iniDeser(RowType rowType, TypeInformation<RowData> resultTypeInfo);
+    void iniDeser(RowType rowType, LogicalType logicalType);
 
 
     void iniSeri(RowType rowType);

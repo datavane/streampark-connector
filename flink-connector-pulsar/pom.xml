@@ -13,6 +13,7 @@
 
     <properties>
         <pulsar.version>2.8.2</pulsar.version>
+        <pulsar.flink.version>1.14.3</pulsar.flink.version>
     </properties>
 
     <dependencies>
@@ -48,26 +49,26 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-common</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -75,7 +76,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-core</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -84,7 +85,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -93,7 +94,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-scala_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -102,7 +103,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -110,7 +111,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <exclusions>
                 <!-- Remove unneeded dependency, which is conflicting with our jetty-util version. -->
                 <exclusion>
@@ -126,7 +127,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-clients_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -139,7 +140,7 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-hadoop-compatibility_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -180,20 +181,20 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-test-utils_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-common</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
-            <version>${flink.version}</version>
+            <version>${pulsar.flink.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

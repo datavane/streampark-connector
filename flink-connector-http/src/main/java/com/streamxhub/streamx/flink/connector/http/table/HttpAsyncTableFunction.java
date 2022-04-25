@@ -12,7 +12,6 @@ import org.apache.flink.table.data.GenericRowData;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.functions.AsyncTableFunction;
 import org.apache.flink.table.functions.FunctionContext;
-import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.FieldsDataType;
 import org.apache.flink.table.types.KeyValueDataType;
@@ -135,7 +134,7 @@ public class HttpAsyncTableFunction extends AsyncTableFunction<RowData> implemen
         DataType dimSchema = ROW(schemaList.toArray(new DataTypes.Field[]{}));
 
         this.rowJsonTranslate = new RowJsonTranslateImp();
-        this.rowJsonTranslate.iniDeser((RowType) dimSchema.getLogicalType(), InternalTypeInfo.of(dimSchema.getLogicalType()));
+        this.rowJsonTranslate.iniDeser((RowType) dimSchema.getLogicalType(), dimSchema.getLogicalType());
 
         // row to json
         // 用于 post 请求下 sql to json 请求参数组装

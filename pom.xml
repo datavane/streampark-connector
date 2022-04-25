@@ -22,30 +22,33 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <flink.version>1.14.3</flink.version>
+        <flink.version>1.12.7</flink.version>
         <scala.binary.version>2.12</scala.binary.version>
         <hadoop.version>2.4.1</hadoop.version>
         <guava.version>29.0-jre</guava.version>
         <fastjson.version>1.2.7</fastjson.version>
+
+        <shim.version>1.12</shim.version>
+        <shim12.version>1.12.7</shim12.version>
+        <shim13.version>1.13.6</shim13.version>
+        <shim14.version>1.14.4</shim14.version>
     </properties>
 
     <dependencies>
-        <!-- Blink planner dependency won't be necessary once flink 1.14 (FLIP-32) has been completed. -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.flink</groupId>-->
-        <!--            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>-->
-        <!--            <version>${flink.version}</version>-->
-        <!--            <scope>provided</scope>-->
-        <!--        </dependency>-->
-
         <dependency>
-            <!-- Since from flink 1.14 flink-table-planner-blink -> flink-table-planner -->
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
 
+        <!-- Need this dependency which flink version below 1.14 -->
+        <!-- 1.14 以下版本必须使用该依赖-->
+        <!--        <dependency>-->
+<!--            <groupId>org.apache.flink</groupId>-->
+<!--            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>-->
+<!--            <version>${flink.version}</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
     </dependencies>
-
 </project>
